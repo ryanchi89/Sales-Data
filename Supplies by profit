@@ -1,0 +1,11 @@
+
+import pandas as pd
+xl=pd.ExcelFile("/content/TableauSalesData.xlsx")
+SalesData = xl.parse("Orders")
+
+SubCSalesProf=SalesData[["Sub-Category","Product Name","Sales","Profit"]]
+SubCSalesProfSup=SubCSalesProf.loc[(SubCSalesProf["Sub-Category"]=="Supplies")]
+SupSalesProf = SubCSalesProfSup.groupby(by=["Product Name"]).sum().sort_values(by="Profit", ascending = False)
+PositiveTables = SupSalesProf[SupSalesProf["Profit"]>0.0]
+
+display(PositiveTables)

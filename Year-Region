@@ -1,0 +1,28 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+xl = pd.ExcelFile("/content/TableauSalesData.xlsx")
+SalesData = xl.parse('Orders')
+JustTables = SalesData.loc[SalesData["Sub-Category"]=="Tables"]
+
+JustBookCases = SalesData.loc[SalesData["Sub-Category"] == "Bookcases"]
+JustBookCasesYear = JustBookCases.copy()
+JustBookCasesYear["Year"] = JustBookCasesYear["Order Date"].dt.year
+Years = JustBookCasesYear.Year.unique()
+Regions = JustBookCasesYear.Region.unique()
+
+RegJustBookCaseseYear = JustBookCasesYear[["Region","Year","Profit","Sales","Discount"]]
+
+
+#Identify the profit, total sales, and discount by each year by region
+
+for year in Years:
+  OneYear = RegJustBookCaseseYear.loc[RegJustBookCaseseYear["Year"] == year]
+  NoYear = OneYear[["Region","Profit", "Sales", "Discount"]]
+  for region in Regions:
+    OneRegion = NoYear.loc[NoYear["Region"]==region]
+    YearlySegRegDiscount = OneRegion.groupby(by="Region").mean()
+    print ("\nRegional table discounts for the year: " + str(year))
+    print('\n' + str(year) + " Tables discounts by customer segment in the " + region + " region")
+    print(YearlySegRegDiscount)
+    print("*"*35)
